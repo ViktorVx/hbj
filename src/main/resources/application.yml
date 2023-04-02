@@ -1,0 +1,7 @@
+server:
+  port: ${PORT:8080}
+telegram:
+  bot:
+    hbj:
+      name: ${BOT_NAME}
+      token: ${BOT_TOKEN}
