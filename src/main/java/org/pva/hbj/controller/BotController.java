@@ -3,6 +3,7 @@ package org.pva.hbj.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pva.hbj.provider.ParamsProvider;
+import org.pva.hbj.service.JourneyService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -15,6 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class BotController extends TelegramLongPollingBot {
 
     private final ParamsProvider paramsProvider;
+    private final JourneyService journeyService;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -23,9 +25,11 @@ public class BotController extends TelegramLongPollingBot {
             log.info(word);
 
             try {
-                var message = new SendMessage();
-                message.setChatId(update.getMessage().getChatId().toString());
-                message.setText("Hello: " + word);
+                var message = switch (word) {
+                    case "/start" -> journeyService.beginJourney(update);
+                    default -> journeyService.beginJourney(update);
+                }
+
                 execute(message);
             } catch (TelegramApiException e) {
                 log.error(e.toString());
