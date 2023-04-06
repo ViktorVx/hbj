@@ -31,6 +31,8 @@ public class BotController extends TelegramLongPollingBot {
     }
 
     private void beginJourney(Update update) {
+        journeyService.resetProgress();
+        sendMessage(update, "Начинаем)!");
         var msg = journeyService.getLevelTask();
         sendMessage(update, msg);
     }

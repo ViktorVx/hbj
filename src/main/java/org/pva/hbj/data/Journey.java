@@ -17,4 +17,8 @@ public class Journey {
         if (hasNextLevel())
             this.currentLevel = this.currentLevel.getNextLevel();
     }
+
+    public void reset() {
+        this.currentLevel = this.startLevel;
+    }
 }

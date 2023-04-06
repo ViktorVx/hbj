@@ -29,6 +29,10 @@ public class JourneyService {
         return this.journey.getCurrentLevel().getText();
     }
 
+    public void resetProgress() {
+        this.journey.reset();
+    }
+
     public void goNextLevel() {
         this.journey.goNextLevel();
     }
