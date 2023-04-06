@@ -2,8 +2,8 @@ package org.pva.hbj.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.pva.hbj.data.Journey;
 import org.pva.hbj.provider.ParamsProvider;
-import org.pva.hbj.service.JourneyService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -13,10 +13,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BotController extends TelegramLongPollingBot {
+public class JourneyBot extends TelegramLongPollingBot {
 
     private final ParamsProvider paramsProvider;
-    private final JourneyService journeyService;
+    private final Journey journey;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -24,33 +24,37 @@ public class BotController extends TelegramLongPollingBot {
             var word = update.getMessage().getText();
             log.info(word);
             switch (word) {
-                case "/start" -> beginJourney(update);
+                case "/start" -> resetJourney(update);
+                case "/code" -> applyCode(update);
                 default -> continueJourney(update);
             }
         }
     }
 
-    private void beginJourney(Update update) {
-        journeyService.resetProgress();
+    private void applyCode(Update update) {
+    }
+
+    private void resetJourney(Update update) {
+        journey.reset();
         sendMessage(update, "Начинаем)!");
-        var msg = journeyService.getLevelTask();
-        sendMessage(update, msg);
+        sendMessage(update, journey.getLevelTask());
     }
 
     private void continueJourney(Update update) {
-        var success = journeyService.checkAnswer(update);
+        var answer = update.getMessage().getText();
+        var success = journey.checkAnswer(answer);
         var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
         if (success) {
-            if (journeyService.doWin()) {
+            if (journey.doWin()) {
                 sendMessage(update, "Ура! Ты победил!");
             } else {
                 sendMessage(update, msg);
-                journeyService.goNextLevel();
-                sendMessage(update, journeyService.getLevelTask());
+                journey.goNextLevel();
+                sendMessage(update, journey.getLevelTask());
             }
         } else {
             sendMessage(update, msg);
-            sendMessage(update, journeyService.getLevelTask());
+            sendMessage(update, journey.getLevelTask());
         }
     }
 
