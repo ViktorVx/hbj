@@ -32,6 +32,8 @@ public class JourneyBot extends TelegramLongPollingBot {
     }
 
     private void applyCode(Update update) {
+        journey.enterCodeModeOn();
+        sendMessage(update, "Введи секретный код: ");
     }
 
     private void resetJourney(Update update) {
@@ -42,6 +44,19 @@ public class JourneyBot extends TelegramLongPollingBot {
 
     private void continueJourney(Update update) {
         var answer = update.getMessage().getText();
+
+        if (journey.isCodeEnterMode()) {
+            if (journey.secretCodeExists(answer)) {
+                journey.moveToLevelBySecretCode(answer);
+                sendMessage(update, " Вжух)! И переносимся на нужный уровень)!");
+                sendMessage(update, journey.getLevelTask());
+            } else {
+                sendMessage(update, "Нету такого кода) ты хочешь меня надурить)");
+            }
+            journey.enterCodeModeOff();
+            return;
+        }
+
         var success = journey.checkAnswer(answer);
         var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
         if (success) {

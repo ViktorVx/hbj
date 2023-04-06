@@ -16,6 +16,31 @@ public class Journey {
     private Level currentLevel;
     private boolean codeEnterMode;
 
+    public boolean secretCodeExists(String secretCode) {
+        var level = this.startLevel;
+        while (level.getNextLevel() != null) {
+            if (level.getSecretLevelCode().equals(secretCode)) {
+                log.info("{} --- {}", level.getSecretLevelCode(), secretCode);
+                return true;
+            }
+            level = level.getNextLevel();
+        }
+        return false;
+    }
+
+    public void moveToLevelBySecretCode(String secretCode) {
+        if (secretCodeExists(secretCode)) {
+            var level = this.startLevel;
+            while (level.getNextLevel() != null) {
+                if (level.getSecretLevelCode().equals(secretCode)) {
+                    this.currentLevel = level;
+                    return;
+                }
+                level = level.getNextLevel();
+            }
+        }
+    }
+
     public boolean isCodeEnterMode() {
         return this.codeEnterMode;
     }
