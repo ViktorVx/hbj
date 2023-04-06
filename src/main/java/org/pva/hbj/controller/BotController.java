@@ -23,17 +23,43 @@ public class BotController extends TelegramLongPollingBot {
         if (update != null && update.getMessage() != null) {
             var word = update.getMessage().getText();
             log.info(word);
-
-            try {
-                var message = switch (word) {
-                    case "/start" -> journeyService.beginJourney(update);
-                    default -> journeyService.beginJourney(update);
-                }
-
-                execute(message);
-            } catch (TelegramApiException e) {
-                log.error(e.toString());
+            switch (word) {
+                case "/start" -> beginJourney(update);
+                default -> continueJourney(update);
             }
+        }
+    }
+
+    private void beginJourney(Update update) {
+        var msg = journeyService.getLevelTask();
+        sendMessage(update, msg);
+    }
+
+    private void continueJourney(Update update) {
+        var success = journeyService.checkAnswer(update);
+        var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
+        if (success) {
+            if (journeyService.doWin()) {
+                sendMessage(update, "Ура! Ты победил!");
+            } else {
+                sendMessage(update, msg);
+                journeyService.goNextLevel();
+                sendMessage(update, journeyService.getLevelTask());
+            }
+        } else {
+            sendMessage(update, msg);
+            sendMessage(update, journeyService.getLevelTask());
+        }
+    }
+
+    private void sendMessage(Update update, String msg) {
+        try {
+            var message = new SendMessage();
+            message.setChatId(update.getMessage().getChatId().toString());
+            message.setText(msg);
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.toString());
         }
     }
 

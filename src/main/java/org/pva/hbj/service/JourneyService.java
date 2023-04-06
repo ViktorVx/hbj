@@ -14,12 +14,7 @@ public class JourneyService {
     private final Journey journey;
 
     public JourneyService() {
-        var startLevel = Level.builder()
-                .text("1+1=?")
-                .answer("2")
-                .secretLevelCode("DGFJV")
-                .imagePath(null)
-                .build();
+        var startLevel = Level.builder().text("1+1=?").answer("2").build();
         startLevel
                 .addNext(Level.builder().text("2+2=?").answer("4").build())
                 .addNext(Level.builder().text("3+3=?").answer("6").build());
@@ -30,10 +25,27 @@ public class JourneyService {
         log.info("Ready!");
     }
 
-    public SendMessage beginJourney(Update update) {
+    public String getLevelTask() {
+        return this.journey.getCurrentLevel().getText();
+    }
+
+    public void goNextLevel() {
+        this.journey.goNextLevel();
+    }
+
+    public boolean checkAnswer(Update update) {
+        var msg = update.getMessage().getText();
+        return this.journey.getCurrentLevel().getAnswer().equalsIgnoreCase(msg);
+    }
+
+    public SendMessage continueJourney(Update update) {
         var message = new SendMessage();
         message.setChatId(update.getMessage().getChatId().toString());
         message.setText(this.journey.getStartLevel().getText());
         return message;
+    }
+
+    public boolean doWin() {
+        return !this.journey.hasNextLevel();
     }
 }
