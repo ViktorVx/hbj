@@ -60,11 +60,19 @@ public class Journey {
     }
 
     public void storyModeOff() {
-        this.mode = JourneyMode.NONE;
+        if (this.currentLevel.isStory()) {
+            this.mode = JourneyMode.STORY;
+        } else {
+            this.mode = JourneyMode.QUESTION;
+        }
     }
 
     public void enterCodeModeOff() {
-        this.mode = JourneyMode.NONE;
+        if (this.currentLevel.isStory()) {
+            this.mode = JourneyMode.STORY;
+        } else {
+            this.mode = JourneyMode.QUESTION;
+        }
     }
 
     public boolean hasNextLevel() {
@@ -72,8 +80,14 @@ public class Journey {
     }
 
     public void goNextLevel() {
-        if (hasNextLevel())
+        if (hasNextLevel()) {
             this.currentLevel = this.currentLevel.getNextLevel();
+            if (this.currentLevel.isStory()) {
+                this.mode = JourneyMode.STORY;
+            } else {
+                this.mode = JourneyMode.QUESTION;
+            }
+        }
     }
 
     public String getLevelTask() {
