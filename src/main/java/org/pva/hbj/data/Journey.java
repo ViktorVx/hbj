@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Data
 @Builder
 @Component
@@ -15,6 +17,7 @@ public class Journey {
     private Level startLevel;
     private Level currentLevel;
     private boolean codeEnterMode;
+    private boolean storyMode;
 
     public boolean secretCodeExists(String secretCode) {
         var level = this.startLevel;
@@ -49,6 +52,14 @@ public class Journey {
         this.codeEnterMode = true;
     }
 
+    public void storyModeOn() {
+        this.storyMode = true;
+    }
+
+    public void storyModeOff() {
+        this.storyMode = false;
+    }
+
     public void enterCodeModeOff() {
         this.codeEnterMode = false;
     }
@@ -64,6 +75,26 @@ public class Journey {
 
     public String getLevelTask() {
         return this.currentLevel.getText();
+    }
+
+    public String getLevelStory() {
+        if (this.currentLevel.isStory()) {
+            return this.getCurrentLevel().getText();
+        } else {
+            return "";
+        }
+    }
+
+    public void goNextPage() {
+        if (this.currentLevel.isStory()) {
+            this.currentLevel.goNextPage();
+        }
+    }
+
+    public boolean isLastStoryPage() {
+        int pointer = this.currentLevel.getPagePointer();
+        int pages = this.currentLevel.getStoryPages().size() - 1;
+        return pointer == pages;
     }
 
     public boolean checkAnswer(String answer) {
@@ -82,6 +113,9 @@ public class Journey {
         var startLevel = Level.builder().text("1+1=?").answer("2").secretLevelCode("l1").build();
         startLevel
                 .addNext(Level.builder().text("2+2=?").answer("4").secretLevelCode("l2").build())
+                .addNext(Level.builder().isStory(true).storyPages(
+                        List.of("Page0", "Page1", "Page2")
+                ).build())
                 .addNext(Level.builder().text("3+3=?").answer("6").secretLevelCode("l3").build());
 
         this.setStartLevel(startLevel);

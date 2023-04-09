@@ -27,8 +27,23 @@ public class JourneyBot extends TelegramLongPollingBot {
                 case "/start" -> resetJourney(update);
                 case "/code" -> applyCode(update);
                 case "/cancel" -> cancel(update);
+                case "/next" -> next(update);
                 default -> continueJourney(update);
             }
+        }
+    }
+
+    private void next(Update update) {
+        if (journey.isLastStoryPage()) {
+            journey.goNextLevel();
+            if (journey.getCurrentLevel().isStory()) {
+                sendMessage(update, journey.getLevelStory());
+            } else {
+                sendMessage(update, journey.getLevelTask());
+            }
+        } else {
+            journey.goNextPage();
+            sendMessage(update, journey.getLevelStory());
         }
     }
 
@@ -62,6 +77,12 @@ public class JourneyBot extends TelegramLongPollingBot {
             } else {
                 sendMessage(update, "Нету такого кода) ты хочешь меня надурить)");
             }
+            return;
+        }
+
+        if (journey.getCurrentLevel().isStory()) {
+            journey.storyModeOn();
+            sendMessage(update, journey.getLevelStory());
             return;
         }
 
