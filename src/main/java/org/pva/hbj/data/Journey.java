@@ -83,15 +83,15 @@ public class Journey {
         }
     }
 
-    public String getLevelTask() {
-        return this.currentLevel.getText();
+    public Message getLevelTask() {
+        return this.currentLevel.getMessage();
     }
 
-    public String getLevelStory() {
+    public Message getLevelStory() {
         if (this.currentLevel.isStory()) {
-            return this.getCurrentLevel().getText();
+            return this.getCurrentLevel().getMessage();
         } else {
-            return "";
+            return new Message("", null);
         }
     }
 
@@ -141,19 +141,27 @@ public class Journey {
     }
 
     public Journey() {
-        var startLevel = Level.builder().message(Message.builder().text("1+1=?").build()).answer("2").secretLevelCode("l1").build();
-        startLevel
-                .addNext(Level.builder().message(Message.builder().text("2+2=?").build()).answer("4").secretLevelCode("l2").build())
-                .addNext(Level.builder().isStory(true).storyPages(
-                        List.of(
-                                Message.builder().text("Page0").build(),
-                                Message.builder().text("Page1").build(),
-                                Message.builder().text("Page2").build())
-                ).build())
-                .addNext(Level.builder().message(Message.builder().text("3+3=?").build()).answer("6").secretLevelCode("l3").build());
+        var intro = Level.builder()
+                .isStory(true)
+                .storyPages(List.of(Message.builder().text("Начинаем)!").build()))
+                .build();
+        intro
+            .addNext(Level.builder()
+                    .message(Message.builder().text("1+1=?").imagePath("gravity-falls-hd-wallpapers-wallpaper-cave-1-800x800.png").build())
+                    .answer("2")
+                    .secretLevelCode("l1")
+                    .build())
+            .addNext(Level.builder().message(Message.builder().text("2+2=?").build()).answer("4").secretLevelCode("l2").build())
+            .addNext(Level.builder().isStory(true).storyPages(
+                    List.of(
+                            Message.builder().text("Page0").build(),
+                            Message.builder().text("Page1").build(),
+                            Message.builder().text("Page2").build())
+            ).build())
+            .addNext(Level.builder().message(Message.builder().text("3+3=?").build()).answer("6").secretLevelCode("l3").build());
 
-        this.setStartLevel(startLevel);
-        this.setCurrentLevel(startLevel);
+        this.setStartLevel(intro);
+        this.setCurrentLevel(intro);
         this.mode = JourneyMode.NONE;
         log.info("Ready!");
     }

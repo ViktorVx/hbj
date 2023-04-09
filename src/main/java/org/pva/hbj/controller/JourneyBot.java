@@ -2,13 +2,20 @@ package org.pva.hbj.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.pva.hbj.data.Journey;
+import org.pva.hbj.data.Message;
 import org.pva.hbj.provider.ParamsProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.File;
 
 @Slf4j
 @Component
@@ -17,6 +24,8 @@ public class JourneyBot extends TelegramLongPollingBot {
 
     private final ParamsProvider paramsProvider;
     private final Journey journey;
+    @Value("${telegram.bot.hbj.image-path}")
+    private String imagePath;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -65,7 +74,6 @@ public class JourneyBot extends TelegramLongPollingBot {
 
     private void start(Update update) {
         journey.reset();
-        sendMessage(update, "Начинаем)!");
         sendMessage(update, journey.getLevelTask());
     }
 
@@ -81,7 +89,7 @@ public class JourneyBot extends TelegramLongPollingBot {
             if (journey.secretCodeExists(answer)) {
                 log.info("Secret code exist");
                 journey.moveToLevelBySecretCode(answer);
-                sendMessage(update, " Вжух)! И переносимся на нужный уровень)!");
+                sendMessage(update, "Вжух)! И переносимся на нужный уровень)!");
                 sendMessage(update, journey.getLevelTask());
                 journey.enterCodeModeOff();
             } else {
@@ -112,11 +120,25 @@ public class JourneyBot extends TelegramLongPollingBot {
     }
 
     private void sendMessage(Update update, String msg) {
+        sendMessage(update, Message.builder().text(msg).build());
+    }
+
+    private void sendMessage(Update update, Message msg) {
         try {
-            var message = new SendMessage();
-            message.setChatId(update.getMessage().getChatId().toString());
-            message.setText(msg);
-            execute(message);
+            if (StringUtils.isBlank(msg.getImagePath())) {
+                var message = new SendMessage();
+                message.setChatId(update.getMessage().getChatId().toString());
+                message.setText(msg.getText());
+                execute(message);
+            } else {
+                log.info("imagePath: " + imagePath);
+                var photo = new InputFile(new File(imagePath + msg.getImagePath()), "filename");
+                var message = new SendPhoto();
+                message.setChatId(update.getMessage().getChatId().toString());
+                message.setCaption(msg.getText());
+                message.setPhoto(photo);
+                execute(message);
+            }
         } catch (TelegramApiException e) {
             log.error(e.toString());
         }

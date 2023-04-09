@@ -18,8 +18,8 @@ public class Level {
     @Builder.Default
     private Integer pagePointer = 0;
 
-    public String getText() {
-        return isStory ? storyPages.get(pagePointer).getText() : this.message.getText();
+    public Message getMessage() {
+        return isStory ? storyPages.get(pagePointer) : this.message;
     }
 
     public void goNextPage() {
