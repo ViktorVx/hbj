@@ -64,19 +64,12 @@ public class Journey {
     }
 
     public void storyModeOff() {
-        if (this.currentLevel.isStory()) {
-            this.mode = JourneyMode.STORY;
-        } else {
-            this.mode = JourneyMode.QUESTION;
-        }
+        updateMode();
     }
 
     public void enterCodeModeOff() {
-        if (this.currentLevel.isStory()) {
-            this.mode = JourneyMode.STORY;
-        } else {
-            this.mode = JourneyMode.QUESTION;
-        }
+        updateMode();
+        resetStories();
     }
 
     public boolean hasNextLevel() {
