@@ -110,13 +110,16 @@ public class Journey {
     }
 
     public Journey() {
-        var startLevel = Level.builder().text("1+1=?").answer("2").secretLevelCode("l1").build();
+        var startLevel = Level.builder().message(Message.builder().text("1+1=?").build()).answer("2").secretLevelCode("l1").build();
         startLevel
-                .addNext(Level.builder().text("2+2=?").answer("4").secretLevelCode("l2").build())
+                .addNext(Level.builder().message(Message.builder().text("2+2=?").build()).answer("4").secretLevelCode("l2").build())
                 .addNext(Level.builder().isStory(true).storyPages(
-                        List.of("Page0", "Page1", "Page2")
+                        List.of(
+                                Message.builder().text("Page0").build(),
+                                Message.builder().text("Page1").build(),
+                                Message.builder().text("Page2").build())
                 ).build())
-                .addNext(Level.builder().text("3+3=?").answer("6").secretLevelCode("l3").build());
+                .addNext(Level.builder().message(Message.builder().text("3+3=?").build()).answer("6").secretLevelCode("l3").build());
 
         this.setStartLevel(startLevel);
         this.setCurrentLevel(startLevel);

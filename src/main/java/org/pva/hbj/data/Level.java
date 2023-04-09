@@ -8,19 +8,18 @@ import java.util.List;
 @Data
 @Builder
 public class Level {
-    private String text;
     private String answer;
-    private String imagePath;
+    private Message message;
     private String secretLevelCode;
     private Level nextLevel;
 
     private boolean isStory;
-    private List<String> storyPages;
+    private List<Message> storyPages;
     @Builder.Default
     private Integer pagePointer = 0;
 
     public String getText() {
-        return isStory ? storyPages.get(pagePointer) : text;
+        return isStory ? storyPages.get(pagePointer).getText() : this.message.getText();
     }
 
     public void goNextPage() {
