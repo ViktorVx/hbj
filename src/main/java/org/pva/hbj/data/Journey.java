@@ -16,8 +16,7 @@ import java.util.List;
 public class Journey {
     private Level startLevel;
     private Level currentLevel;
-    private boolean codeEnterMode;
-    private boolean storyMode;
+    private JourneyMode mode;
 
     public boolean secretCodeExists(String secretCode) {
         var level = this.startLevel;
@@ -45,23 +44,27 @@ public class Journey {
     }
 
     public boolean isCodeEnterMode() {
-        return this.codeEnterMode;
+        return this.mode == JourneyMode.CODE;
+    }
+
+    public boolean isStoreMode() {
+        return this.mode == JourneyMode.STORY;
     }
 
     public void enterCodeModeOn() {
-        this.codeEnterMode = true;
+        this.mode = JourneyMode.CODE;
     }
 
     public void storyModeOn() {
-        this.storyMode = true;
+        this.mode = JourneyMode.STORY;
     }
 
     public void storyModeOff() {
-        this.storyMode = false;
+        this.mode = JourneyMode.NONE;
     }
 
     public void enterCodeModeOff() {
-        this.codeEnterMode = false;
+        this.mode = JourneyMode.NONE;
     }
 
     public boolean hasNextLevel() {
@@ -123,7 +126,7 @@ public class Journey {
 
         this.setStartLevel(startLevel);
         this.setCurrentLevel(startLevel);
-        this.codeEnterMode = false;
+        this.mode = JourneyMode.NONE;
         log.info("Ready!");
     }
 }

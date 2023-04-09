@@ -24,16 +24,19 @@ public class JourneyBot extends TelegramLongPollingBot {
             var word = update.getMessage().getText();
             log.info(word);
             switch (word) {
-                case "/start" -> resetJourney(update);
+                case "/start" -> start(update);
                 case "/code" -> applyCode(update);
                 case "/cancel" -> cancel(update);
                 case "/next" -> next(update);
-                default -> continueJourney(update);
+                default -> process(update);
             }
         }
     }
 
     private void next(Update update) {
+        if (!journey.isStoreMode()) {
+            return;
+        }
         if (journey.isLastStoryPage()) {
             journey.goNextLevel();
             if (journey.getCurrentLevel().isStory()) {
@@ -48,6 +51,9 @@ public class JourneyBot extends TelegramLongPollingBot {
     }
 
     private void cancel(Update update) {
+        if (!journey.isCodeEnterMode()) {
+            return;
+        }
         journey.enterCodeModeOff();
         sendMessage(update, journey.getLevelTask());
     }
@@ -57,13 +63,13 @@ public class JourneyBot extends TelegramLongPollingBot {
         sendMessage(update, "Введи секретный код: ");
     }
 
-    private void resetJourney(Update update) {
+    private void start(Update update) {
         journey.reset();
         sendMessage(update, "Начинаем)!");
         sendMessage(update, journey.getLevelTask());
     }
 
-    private void continueJourney(Update update) {
+    private void process(Update update) {
         var answer = update.getMessage().getText();
         // Code mode
         if (journey.isCodeEnterMode()) {
