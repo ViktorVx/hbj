@@ -18,7 +18,7 @@ public class Journey {
 
     public boolean secretCodeExists(String secretCode) {
         var level = this.startLevel;
-        while (level.getNextLevel() != null) {
+        while (level != null) {
             if (level.getSecretLevelCode().equals(secretCode)) {
                 log.info("{} --- {}", level.getSecretLevelCode(), secretCode);
                 return true;
@@ -31,7 +31,7 @@ public class Journey {
     public void moveToLevelBySecretCode(String secretCode) {
         if (secretCodeExists(secretCode)) {
             var level = this.startLevel;
-            while (level.getNextLevel() != null) {
+            while (level != null) {
                 if (level.getSecretLevelCode().equals(secretCode)) {
                     this.currentLevel = level;
                     return;

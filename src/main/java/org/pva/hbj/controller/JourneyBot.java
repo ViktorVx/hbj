@@ -46,14 +46,16 @@ public class JourneyBot extends TelegramLongPollingBot {
         var answer = update.getMessage().getText();
 
         if (journey.isCodeEnterMode()) {
+            log.info("Enter code mode");
             if (journey.secretCodeExists(answer)) {
+                log.info("Secret code exist");
                 journey.moveToLevelBySecretCode(answer);
                 sendMessage(update, " Вжух)! И переносимся на нужный уровень)!");
                 sendMessage(update, journey.getLevelTask());
+                journey.enterCodeModeOff();
             } else {
                 sendMessage(update, "Нету такого кода) ты хочешь меня надурить)");
             }
-            journey.enterCodeModeOff();
             return;
         }
 
