@@ -26,9 +26,15 @@ public class JourneyBot extends TelegramLongPollingBot {
             switch (word) {
                 case "/start" -> resetJourney(update);
                 case "/code" -> applyCode(update);
+                case "/cancel" -> cancel(update);
                 default -> continueJourney(update);
             }
         }
+    }
+
+    private void cancel(Update update) {
+        journey.enterCodeModeOff();
+        sendMessage(update, journey.getLevelTask());
     }
 
     private void applyCode(Update update) {
