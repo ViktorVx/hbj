@@ -65,7 +65,7 @@ public class JourneyBot extends TelegramLongPollingBot {
 
     private void continueJourney(Update update) {
         var answer = update.getMessage().getText();
-
+        // Code mode
         if (journey.isCodeEnterMode()) {
             log.info("Enter code mode");
             if (journey.secretCodeExists(answer)) {
@@ -79,13 +79,12 @@ public class JourneyBot extends TelegramLongPollingBot {
             }
             return;
         }
-
+        // Story mode
         if (journey.getCurrentLevel().isStory()) {
             journey.storyModeOn();
-            sendMessage(update, journey.getLevelStory());
             return;
         }
-
+        // Question mode
         var success = journey.checkAnswer(answer);
         var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
         if (success) {
