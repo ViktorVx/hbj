@@ -63,10 +63,6 @@ public class Journey {
         this.mode = JourneyMode.STORY;
     }
 
-    public void storyModeOff() {
-        updateMode();
-    }
-
     public void enterCodeModeOff() {
         updateMode();
         resetStories();
