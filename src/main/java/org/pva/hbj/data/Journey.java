@@ -129,6 +129,18 @@ public class Journey {
     public void reset() {
         this.currentLevel = this.startLevel;
         updateMode();
+        resetStories();
+    }
+
+    private void resetStories() {
+        var level = this.startLevel;
+        while (level != null) {
+            if (level.isStory()) {
+                level.setPagePointer(0);
+                return;
+            }
+            level = level.getNextLevel();
+        }
     }
 
     private void updateMode() {
