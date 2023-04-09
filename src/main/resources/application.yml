@@ -5,4 +5,4 @@ telegram:
     hbj:
       name: ${BOT_NAME}
       token: ${BOT_TOKEN}
-      image-path: /home/viktorvx/Загрузки/hbj/
+      image-path: /home/viktorvx/Загрузки/hbj/images/
