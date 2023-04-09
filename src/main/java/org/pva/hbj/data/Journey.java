@@ -51,6 +51,10 @@ public class Journey {
         return this.mode == JourneyMode.STORY;
     }
 
+    public boolean isNoneMode() {
+        return this.mode == JourneyMode.NONE;
+    }
+
     public void enterCodeModeOn() {
         this.mode = JourneyMode.CODE;
     }
@@ -124,6 +128,15 @@ public class Journey {
 
     public void reset() {
         this.currentLevel = this.startLevel;
+        updateMode();
+    }
+
+    private void updateMode() {
+        if (this.currentLevel.isStory()) {
+            this.mode = JourneyMode.STORY;
+        } else {
+            this.mode = JourneyMode.QUESTION;
+        }
     }
 
     public Journey() {
