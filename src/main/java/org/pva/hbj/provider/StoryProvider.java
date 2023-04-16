@@ -11,16 +11,16 @@ public class StoryProvider {
     }
 
     public static Level makeStoryLine() {
-        var startLevel = StoryProvider.intro();
+        var startLevel = StoryProvider.intro0();
         startLevel
                 .addNext(StoryProvider.level1())
                 .addNext(StoryProvider.level2())
-                .addNext(StoryProvider.story1())
-                .addNext(StoryProvider.level3());
+                .addNext(StoryProvider.story3())
+                .addNext(StoryProvider.level4());
         return startLevel;
     }
 
-    private static Level intro() {
+    private static Level intro0() {
         return Level.builder()
                 .isStory(true)
                 .storyPages(List.of(Message.builder().text("Начинаем)!").build()))
@@ -43,7 +43,7 @@ public class StoryProvider {
                 .build();
     }
 
-    private static Level story1() {
+    private static Level story3() {
         return Level.builder().isStory(true).storyPages(
                 List.of(
                         Message.builder().text("Page0").build(),
@@ -52,7 +52,7 @@ public class StoryProvider {
         ).build();
     }
 
-    private static Level level3() {
+    private static Level level4() {
         return Level.builder()
                 .message(Message.builder().text("3+3=?").build())
                 .answer("6")
