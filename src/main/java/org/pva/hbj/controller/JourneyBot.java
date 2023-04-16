@@ -140,7 +140,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         try {
             var audio = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
             var message = new SendAudio();
-            message.setChatId(getChatId(update));
+            message.setChatId(extractChatId(update));
             message.setCaption(msg.getText());
             message.setAudio(audio);
             if (msg.getKeyboard() != null) {
@@ -156,7 +156,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         try {
             var video = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
             var message = new SendVideo();
-            message.setChatId(getChatId(update));
+            message.setChatId(extractChatId(update));
             message.setCaption(msg.getText());
             message.setVideo(video);
             if (msg.getKeyboard() != null) {
@@ -172,7 +172,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         try {
             var photo = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
             var message = new SendPhoto();
-            message.setChatId(getChatId(update));
+            message.setChatId(extractChatId(update));
             message.setCaption(msg.getText());
             message.setPhoto(photo);
             if (msg.getKeyboard() != null) {
@@ -187,7 +187,7 @@ public class JourneyBot extends TelegramLongPollingBot {
     private void sendTextMessage(Update update, Message msg) {
         try {
             var message = new SendMessage();
-            message.setChatId(getChatId(update));
+            message.setChatId(extractChatId(update));
             message.setText(msg.getText());
             message.enableHtml(true);
             if (msg.getKeyboard() != null) {
@@ -199,7 +199,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         }
     }
 
-    private String getChatId(Update update) {
+    private String extractChatId(Update update) {
         if (update.hasCallbackQuery()) {
             return update.getCallbackQuery().getMessage().getChatId().toString();
         } else {
