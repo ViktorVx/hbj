@@ -14,9 +14,13 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -30,16 +34,19 @@ public class JourneyBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update != null && update.getMessage() != null) {
-            var word = update.getMessage().getText();
-            log.info(word);
-            switch (word) {
-                case "/start" -> start(update);
-                case "/code" -> applyCode(update);
-                case "/cancel" -> cancel(update);
-                case "/next" -> next(update);
-                default -> process(update);
-            }
+        var word = "";
+        if (update.hasCallbackQuery()) {
+            word = update.getCallbackQuery().getData();
+        } else if (update.hasMessage()) {
+            word = update.getMessage().getText();
+        }
+        log.info(word);
+        switch (word) {
+            case "/start" -> start(update);
+            case "/code" -> applyCode(update);
+            case "/cancel" -> cancel(update);
+            case "/next" -> next(update);
+            default -> process(update);
         }
     }
 
@@ -137,7 +144,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         try {
             var audio = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
             var message = new SendAudio();
-            message.setChatId(update.getMessage().getChatId().toString());
+            message.setChatId(getChatId(update));
             message.setCaption(msg.getText());
             message.setAudio(audio);
             execute(message);
@@ -150,7 +157,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         try {
             var video = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
             var message = new SendVideo();
-            message.setChatId(update.getMessage().getChatId().toString());
+            message.setChatId(getChatId(update));
             message.setCaption(msg.getText());
             message.setVideo(video);
             execute(message);
@@ -163,7 +170,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         try {
             var photo = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
             var message = new SendPhoto();
-            message.setChatId(update.getMessage().getChatId().toString());
+            message.setChatId(getChatId(update));
             message.setCaption(msg.getText());
             message.setPhoto(photo);
             execute(message);
@@ -175,11 +182,32 @@ public class JourneyBot extends TelegramLongPollingBot {
     private void sendTextMessage(Update update, Message msg) {
         try {
             var message = new SendMessage();
-            message.setChatId(update.getMessage().getChatId().toString());
+            message.setChatId(getChatId(update));
             message.setText(msg.getText());
+            message.enableHtml(true);
+            if (journey.isStoreMode()) {
+                var inlineKeyboardMarkup =new InlineKeyboardMarkup();
+                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+                inlineKeyboardButton.setText("Далее");
+                inlineKeyboardButton.setCallbackData("/next");
+                List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
+                keyboardButtonsRow1.add(inlineKeyboardButton);
+                List<List<InlineKeyboardButton>> rowList= new ArrayList<>();
+                rowList.add(keyboardButtonsRow1);
+                inlineKeyboardMarkup.setKeyboard(rowList);
+                message.setReplyMarkup(inlineKeyboardMarkup);
+            }
             execute(message);
         } catch (TelegramApiException e) {
             log.error(e.toString());
+        }
+    }
+
+    private String getChatId(Update update) {
+        if (update.hasCallbackQuery()) {
+            return update.getCallbackQuery().getMessage().getChatId().toString();
+        } else {
+            return update.getMessage().getChatId().toString();
         }
     }
 

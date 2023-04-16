@@ -9,7 +9,13 @@ public class Level0 {
     public static Level generate() {
         return Level.builder()
                 .isStory(true)
-                .storyPages(List.of(Message.builder().text("Начинаем)!").build()))
+                .storyPages(List.of(Message.builder()
+                        .text("""
+                              Начинаем)!
+                              <u><b>Привет всем)!</b></u>
+                              Я тут 🤘
+                              """)
+                        .build()))
                 .build();
     }
 }
