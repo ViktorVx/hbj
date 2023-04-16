@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.pva.hbj.provider.StoryProvider;
+import org.pva.hbj.provider.story.StoryProvider;
 import org.springframework.stereotype.Component;
 
 @Data
