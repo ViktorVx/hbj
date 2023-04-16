@@ -1,7 +1,7 @@
 package org.pva.hbj.provider.story;
 
 import org.pva.hbj.data.Level;
-import org.pva.hbj.provider.story.levels.*;
+import org.pva.hbj.utils.levels.*;
 
 public class StoryProvider {
 

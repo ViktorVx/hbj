@@ -14,13 +14,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -147,6 +143,9 @@ public class JourneyBot extends TelegramLongPollingBot {
             message.setChatId(getChatId(update));
             message.setCaption(msg.getText());
             message.setAudio(audio);
+            if (msg.getKeyboard() != null) {
+                message.setReplyMarkup(msg.getKeyboard());
+            }
             execute(message);
         } catch (TelegramApiException e) {
             log.error(e.toString());
@@ -160,6 +159,9 @@ public class JourneyBot extends TelegramLongPollingBot {
             message.setChatId(getChatId(update));
             message.setCaption(msg.getText());
             message.setVideo(video);
+            if (msg.getKeyboard() != null) {
+                message.setReplyMarkup(msg.getKeyboard());
+            }
             execute(message);
         } catch (TelegramApiException e) {
             log.error(e.toString());
@@ -173,6 +175,9 @@ public class JourneyBot extends TelegramLongPollingBot {
             message.setChatId(getChatId(update));
             message.setCaption(msg.getText());
             message.setPhoto(photo);
+            if (msg.getKeyboard() != null) {
+                message.setReplyMarkup(msg.getKeyboard());
+            }
             execute(message);
         } catch (TelegramApiException e) {
             log.error(e.toString());
@@ -185,17 +190,8 @@ public class JourneyBot extends TelegramLongPollingBot {
             message.setChatId(getChatId(update));
             message.setText(msg.getText());
             message.enableHtml(true);
-            if (journey.isStoreMode()) {
-                var inlineKeyboardMarkup =new InlineKeyboardMarkup();
-                InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
-                inlineKeyboardButton.setText("Далее");
-                inlineKeyboardButton.setCallbackData("/next");
-                List<InlineKeyboardButton> keyboardButtonsRow1 = new ArrayList<>();
-                keyboardButtonsRow1.add(inlineKeyboardButton);
-                List<List<InlineKeyboardButton>> rowList= new ArrayList<>();
-                rowList.add(keyboardButtonsRow1);
-                inlineKeyboardMarkup.setKeyboard(rowList);
-                message.setReplyMarkup(inlineKeyboardMarkup);
+            if (msg.getKeyboard() != null) {
+                message.setReplyMarkup(msg.getKeyboard());
             }
             execute(message);
         } catch (TelegramApiException e) {

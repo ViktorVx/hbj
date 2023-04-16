@@ -1,4 +1,4 @@
-package org.pva.hbj.provider.story.levels;
+package org.pva.hbj.utils.levels;
 
 import org.pva.hbj.data.Level;
 import org.pva.hbj.data.MediaType;
