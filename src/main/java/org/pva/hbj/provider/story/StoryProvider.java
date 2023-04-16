@@ -15,7 +15,8 @@ public class StoryProvider {
                 .addNext(Level2.generate())
                 .addNext(Level3.generate())
                 .addNext(Level4.generate())
-                .addNext(Level5.generate());
+                .addNext(Level5.generate())
+                .addNext(Level6.generate());
         return startLevel;
     }
 }

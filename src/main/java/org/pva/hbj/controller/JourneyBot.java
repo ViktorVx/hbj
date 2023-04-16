@@ -8,6 +8,7 @@ import org.pva.hbj.provider.ParamsProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendAudio;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -127,7 +128,21 @@ public class JourneyBot extends TelegramLongPollingBot {
         switch (msg.getMediaType()) {
             case IMAGE -> sendImageMessage(update, msg);
             case VIDEO -> sendVideoMessage(update, msg);
+            case AUDIO -> sendAudioMessage(update, msg);
             default -> sendTextMessage(update, msg);
+        }
+    }
+
+    private void sendAudioMessage(Update update, Message msg) {
+        try {
+            var audio = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
+            var message = new SendAudio();
+            message.setChatId(update.getMessage().getChatId().toString());
+            message.setCaption(msg.getText());
+            message.setAudio(audio);
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.toString());
         }
     }
 
