@@ -1,6 +1,7 @@
 package org.pva.hbj.provider;
 
 import org.pva.hbj.data.Level;
+import org.pva.hbj.data.MediaType;
 import org.pva.hbj.data.Message;
 
 import java.util.List;
@@ -16,7 +17,8 @@ public class StoryProvider {
                 .addNext(StoryProvider.level1())
                 .addNext(StoryProvider.level2())
                 .addNext(StoryProvider.story3())
-                .addNext(StoryProvider.level4());
+                .addNext(StoryProvider.level4())
+                .addNext(StoryProvider.level5());
         return startLevel;
     }
 
@@ -29,7 +31,11 @@ public class StoryProvider {
 
     private static Level level1() {
         return Level.builder()
-                .message(Message.builder().text("1+1=?").imagePath("gravity-falls-hd-wallpapers-wallpaper-cave-1-800x800.png").build())
+                .message(Message.builder()
+                        .text("1+1=?")
+                        .mediaType(MediaType.IMAGE)
+                        .mediaPath("images/gravity-falls-hd-wallpapers-wallpaper-cave-1-800x800.png")
+                        .build())
                 .answer("2")
                 .secretLevelCode("l1")
                 .build();
@@ -37,7 +43,11 @@ public class StoryProvider {
 
     private static Level level2() {
         return Level.builder()
-                .message(Message.builder().text("2+2=?").build())
+                .message(Message.builder()
+                        .text("2+2=?")
+                        .mediaType(MediaType.VIDEO)
+                        .mediaPath("video/hv.mp4")
+                        .build())
                 .answer("4")
                 .secretLevelCode("l2")
                 .build();
@@ -56,7 +66,15 @@ public class StoryProvider {
         return Level.builder()
                 .message(Message.builder().text("3+3=?").build())
                 .answer("6")
-                .secretLevelCode("l3")
+                .secretLevelCode("l4")
+                .build();
+    }
+
+    private static Level level5() {
+        return Level.builder()
+                .message(Message.builder().text("4+4=?").build())
+                .answer("8")
+                .secretLevelCode("l5")
                 .build();
     }
 }

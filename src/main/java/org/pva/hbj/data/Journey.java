@@ -90,7 +90,7 @@ public class Journey {
         if (this.currentLevel.isStory()) {
             return this.getCurrentLevel().getMessage();
         } else {
-            return new Message("", null);
+            return new Message("");
         }
     }
 

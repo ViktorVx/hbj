@@ -2,7 +2,6 @@ package org.pva.hbj.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.pva.hbj.data.Journey;
 import org.pva.hbj.data.Message;
 import org.pva.hbj.provider.ParamsProvider;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -24,8 +24,8 @@ public class JourneyBot extends TelegramLongPollingBot {
 
     private final ParamsProvider paramsProvider;
     private final Journey journey;
-    @Value("${telegram.bot.hbj.image-path}")
-    private String imagePath;
+    @Value("${telegram.bot.hbj.media-path}")
+    private String mediaPath;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -124,21 +124,45 @@ public class JourneyBot extends TelegramLongPollingBot {
     }
 
     private void sendMessage(Update update, Message msg) {
+        switch (msg.getMediaType()) {
+            case IMAGE -> sendImageMessage(update, msg);
+            case VIDEO -> sendVideoMessage(update, msg);
+            default -> sendTextMessage(update, msg);
+        }
+    }
+
+    private void sendVideoMessage(Update update, Message msg) {
         try {
-            if (StringUtils.isBlank(msg.getImagePath())) {
-                var message = new SendMessage();
-                message.setChatId(update.getMessage().getChatId().toString());
-                message.setText(msg.getText());
-                execute(message);
-            } else {
-                log.info("imagePath: " + imagePath);
-                var photo = new InputFile(new File(imagePath + msg.getImagePath()), "filename");
-                var message = new SendPhoto();
-                message.setChatId(update.getMessage().getChatId().toString());
-                message.setCaption(msg.getText());
-                message.setPhoto(photo);
-                execute(message);
-            }
+            var video = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
+            var message = new SendVideo();
+            message.setChatId(update.getMessage().getChatId().toString());
+            message.setCaption(msg.getText());
+            message.setVideo(video);
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.toString());
+        }
+    }
+
+    private void sendImageMessage(Update update, Message msg) {
+        try {
+            var photo = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
+            var message = new SendPhoto();
+            message.setChatId(update.getMessage().getChatId().toString());
+            message.setCaption(msg.getText());
+            message.setPhoto(photo);
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.toString());
+        }
+    }
+
+    private void sendTextMessage(Update update, Message msg) {
+        try {
+            var message = new SendMessage();
+            message.setChatId(update.getMessage().getChatId().toString());
+            message.setText(msg.getText());
+            execute(message);
         } catch (TelegramApiException e) {
             log.error(e.toString());
         }
