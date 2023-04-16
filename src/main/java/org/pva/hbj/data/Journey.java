@@ -125,7 +125,6 @@ public class Journey {
         while (level != null) {
             if (level.isStory()) {
                 level.setPagePointer(0);
-                return;
             }
             level = level.getNextLevel();
         }
