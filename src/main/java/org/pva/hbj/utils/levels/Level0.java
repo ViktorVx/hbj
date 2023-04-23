@@ -10,6 +10,7 @@ public class Level0 {
     public static Level generate() {
         return Level.builder()
                 .isStory(true)
+                .secretLevelCode("l0")
                 .storyPages(List.of(Message.builder()
                         .keyboard(StoryKeyboard.create())
                         .text("""

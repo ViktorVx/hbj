@@ -9,7 +9,7 @@ public class Level6 {
         return Level.builder()
                 .message(Message.builder().text("5+4=?").build())
                 .answer("9")
-                .secretLevelCode("l5")
+                .secretLevelCode("l6")
                 .build();
     }
 }

@@ -12,6 +12,7 @@ public class Level {
     private Message message;
     private String secretLevelCode;
     private Level nextLevel;
+    private JourneyMode journeyMode;
 
     private boolean isStory;
     private List<Message> storyPages;

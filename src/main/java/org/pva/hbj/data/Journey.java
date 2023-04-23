@@ -1,21 +1,34 @@
 package org.pva.hbj.data;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.pva.hbj.provider.story.StoryProvider;
+import org.pva.hbj.service.SaveService;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Data
 @Builder
 @Component
-@AllArgsConstructor
 @Slf4j
 public class Journey {
     private Level startLevel;
     private Level currentLevel;
-    private JourneyMode mode;
+    private JourneyMode journeyMode;
+    private SaveService saveService;
+
+    @PostConstruct
+    private void postConstruct() {
+        if (saveService.saveModeEnabled()) {
+            if (saveService.saveFileExists()) {
+                var levelCode = saveService.load();
+                moveToLevelBySecretCode(levelCode);
+            } else {
+                log.error("Файла не найдено");
+            }
+        }
+    }
 
     public boolean secretCodeExists(String secretCode) {
         var level = this.startLevel;
@@ -35,6 +48,7 @@ public class Journey {
             while (level != null) {
                 if (level.getSecretLevelCode() != null && level.getSecretLevelCode().equals(secretCode)) {
                     this.currentLevel = level;
+                    this.journeyMode = this.currentLevel.isStory() ? JourneyMode.STORY : JourneyMode.QUESTION;
                     return;
                 }
                 level = level.getNextLevel();
@@ -43,23 +57,23 @@ public class Journey {
     }
 
     public boolean isCodeEnterMode() {
-        return this.mode == JourneyMode.CODE;
+        return this.journeyMode == JourneyMode.CODE;
     }
 
     public boolean isStoreMode() {
-        return this.mode == JourneyMode.STORY;
+        return this.journeyMode == JourneyMode.STORY;
     }
 
     public boolean isNoneMode() {
-        return this.mode == JourneyMode.NONE;
+        return this.journeyMode == JourneyMode.NONE;
     }
 
     public void enterCodeModeOn() {
-        this.mode = JourneyMode.CODE;
+        this.journeyMode = JourneyMode.CODE;
     }
 
     public void storyModeOn() {
-        this.mode = JourneyMode.STORY;
+        this.journeyMode = JourneyMode.STORY;
     }
 
     public void enterCodeModeOff() {
@@ -74,10 +88,13 @@ public class Journey {
     public void goNextLevel() {
         if (hasNextLevel()) {
             this.currentLevel = this.currentLevel.getNextLevel();
+            if (saveService.saveModeEnabled()) {
+                saveService.save(this.currentLevel.getSecretLevelCode());
+            }
             if (this.currentLevel.isStory()) {
-                this.mode = JourneyMode.STORY;
+                this.journeyMode = JourneyMode.STORY;
             } else {
-                this.mode = JourneyMode.QUESTION;
+                this.journeyMode = JourneyMode.QUESTION;
             }
         }
     }
@@ -118,6 +135,9 @@ public class Journey {
         this.currentLevel = this.startLevel;
         updateMode();
         resetStories();
+        if (saveService.saveModeEnabled()) {
+            saveService.clearProgress();
+        }
     }
 
     private void resetStories() {
@@ -132,18 +152,9 @@ public class Journey {
 
     private void updateMode() {
         if (this.currentLevel.isStory()) {
-            this.mode = JourneyMode.STORY;
+            this.journeyMode = JourneyMode.STORY;
         } else {
-            this.mode = JourneyMode.QUESTION;
+            this.journeyMode = JourneyMode.QUESTION;
         }
-    }
-
-    public Journey() {
-        var startLevel = StoryProvider.makeStoryLine();
-
-        this.setStartLevel(startLevel);
-        this.setCurrentLevel(startLevel);
-        this.mode = JourneyMode.NONE;
-        log.info("Ready!");
     }
 }

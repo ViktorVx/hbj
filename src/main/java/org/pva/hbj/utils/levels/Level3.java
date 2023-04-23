@@ -9,7 +9,10 @@ import java.util.List;
 public class Level3 {
 
     public static Level generate() {
-        return Level.builder().isStory(true).storyPages(
+        return Level.builder()
+                .isStory(true)
+                .secretLevelCode("l3")
+                .storyPages(
                 List.of(
                         Message.builder().text("Page0").keyboard(StoryKeyboard.create()).build(),
                         Message.builder().text("Page1").keyboard(StoryKeyboard.create()).build(),

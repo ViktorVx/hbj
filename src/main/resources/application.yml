@@ -6,3 +6,6 @@ telegram:
       name: ${BOT_NAME}
       token: ${BOT_TOKEN}
       media-path: /home/viktorvx/Загрузки/hbj/
+save:
+  path: /home/viktorvx/Загрузки/hbj/save/
+  enabled: true
