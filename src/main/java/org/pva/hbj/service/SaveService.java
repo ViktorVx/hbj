@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 @NoArgsConstructor
 public class SaveService {
 
-    @Value("${save.path")
+    @Value("${save.path}")
     private String savePath;
     @Value("${save.enabled}")
     private Boolean saveEnabled;
