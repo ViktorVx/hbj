@@ -112,7 +112,7 @@ public class JourneyBot extends TelegramLongPollingBot {
             journey.storyModeOn();
             return;
         }
-        // Question mode
+        // Question/Task mode
         var success = journey.checkAnswer(answer);
         var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
         if (success) {
