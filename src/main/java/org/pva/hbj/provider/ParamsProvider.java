@@ -1,7 +1,6 @@
 package org.pva.hbj.provider;
 
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,6 +15,18 @@ public class ParamsProvider {
     @Value("${telegram.bot.hbj.token}")
     private String botToken;
 
+    @Value("${telegram.bot.hbj-admin.name}")
+    private String adminBotName;
+    @Value("${telegram.bot.hbj-admin.token}")
+    private String adminBotToken;
+
+    public String getAdminBotName() {
+        return this.adminBotName;
+    }
+
+    public String getAdminBotToken() {
+        return this.adminBotToken;
+    }
 
     public String getBotName() {
         return this.botName;

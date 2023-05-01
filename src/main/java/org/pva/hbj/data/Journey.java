@@ -3,6 +3,7 @@ package org.pva.hbj.data;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.pva.hbj.controller.AdminBot;
 import org.pva.hbj.service.SaveService;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ public class Journey {
     private Level currentLevel;
     private JourneyMode journeyMode;
     private SaveService saveService;
+    private AdminBot adminBot;
 
     @PostConstruct
     private void postConstruct() {
@@ -93,6 +95,9 @@ public class Journey {
             }
             if (this.currentLevel.isStory()) {
                 this.journeyMode = JourneyMode.STORY;
+            } else if (this.currentLevel.getIsTask()) {
+                this.journeyMode = JourneyMode.TASK;
+                adminBot.check(this.currentLevel);
             } else {
                 this.journeyMode = JourneyMode.QUESTION;
             }
@@ -124,7 +129,12 @@ public class Journey {
     }
 
     public boolean checkAnswer(String answer) {
-        return this.getCurrentLevel().getAnswer().equalsIgnoreCase(answer);
+        if (this.currentLevel.getIsTask()) {
+            adminBot.check(this.currentLevel);
+            return this.currentLevel.getIsTaskComplete();
+        } else {
+            return this.getCurrentLevel().getAnswer().equalsIgnoreCase(answer);
+        }
     }
 
     public boolean doWin() {

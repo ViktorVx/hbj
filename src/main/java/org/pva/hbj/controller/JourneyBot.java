@@ -82,7 +82,13 @@ public class JourneyBot extends TelegramLongPollingBot {
     }
 
     private void process(Update update) {
-        var answer = update.getMessage().getText();
+        String answer = "";
+        if (update.getMessage() != null) {
+            answer = update.getMessage().getText();
+        }
+        if (update.getCallbackQuery() != null) {
+            answer = update.getCallbackQuery().getMessage().getText();
+        }
         // None mode
         if (journey.isNoneMode()) {
             return;
