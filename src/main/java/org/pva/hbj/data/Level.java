@@ -13,11 +13,14 @@ public class Level {
     private String secretLevelCode;
     private Level nextLevel;
     private JourneyMode journeyMode;
-
     private boolean isStory;
     private List<Message> storyPages;
     @Builder.Default
     private Integer pagePointer = 0;
+    @Builder.Default
+    private Boolean isTask = false;
+    @Builder.Default
+    private Boolean isTaskComplete = false;
 
     public Message getMessage() {
         return isStory ? storyPages.get(pagePointer) : this.message;

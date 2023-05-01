@@ -12,6 +12,7 @@ public class StoryProvider {
         var startLevel = Level0.generate();
         startLevel
                 .addNext(Level1.generate())
+                .addNext(Level11.generate())
                 .addNext(Level2.generate())
                 .addNext(Level3.generate())
                 .addNext(Level4.generate())

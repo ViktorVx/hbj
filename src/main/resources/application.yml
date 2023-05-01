@@ -6,6 +6,10 @@ telegram:
       name: ${BOT_NAME}
       token: ${BOT_TOKEN}
       media-path: /home/viktorvx/Загрузки/hbj/
+    hbj-admin:
+      name: ${ADMIN_BOT_NAME}
+      token: ${ADMIN_BOT_TOKEN}
+      chat: ${ADMIN_CHAT}
 save:
   path: /home/viktorvx/Загрузки/hbj/save/
   enabled: true
