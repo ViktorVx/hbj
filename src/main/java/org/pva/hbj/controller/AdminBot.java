@@ -19,7 +19,7 @@ public class AdminBot extends TelegramLongPollingBot {
 
     private final ParamsProvider paramsProvider;
     @Value("${telegram.bot.hbj-admin.chat}")
-    private final String adminChatId;
+    private String adminChatId;
     private Level currentCheckLevel;
 
     @Override

@@ -82,37 +82,35 @@ public class JourneyBot extends TelegramLongPollingBot {
     }
 
     private void process(Update update) {
-        String answer = "";
-        if (update.getMessage() != null) {
-            answer = update.getMessage().getText();
+        switch (journey.getJourneyMode()) {
+            case NONE -> processNoneMode();
+            case CODE -> processCodeMode(update);
+            case STORY -> processStoryMode();
+            case QUESTION -> processQuestionMode(update);
+            case TASK -> processTaskMode(update);
         }
-        if (update.getCallbackQuery() != null) {
-            answer = update.getCallbackQuery().getMessage().getText();
-        }
-        // None mode
-        if (journey.isNoneMode()) {
-            return;
-        }
-        // Code mode
-        if (journey.isCodeEnterMode()) {
-            log.info("Enter code mode");
-            if (journey.secretCodeExists(answer)) {
-                log.info("Secret code exist");
-                journey.moveToLevelBySecretCode(answer);
-                sendMessage(update, "Вжух)! И переносимся на нужный уровень)!");
-                sendMessage(update, journey.getLevelTask());
-                journey.enterCodeModeOff();
+    }
+
+    private void processTaskMode(Update update) {
+        var answer = update.getCallbackQuery().getMessage().getText();
+        var success = journey.checkAnswer(answer);
+        var msg = success ? "Отлично)! Поехали дальше)!" : "Не, не, не)) ты хочешь меня надурить)!";
+        if (success) {
+            if (journey.doWin()) {
+                sendMessage(update, "Ура! Ты победил!");
             } else {
-                sendMessage(update, "Нету такого кода) ты хочешь меня надурить)");
+                sendMessage(update, msg);
+                journey.goNextLevel();
+                sendMessage(update, journey.getLevelTask());
             }
-            return;
+        } else {
+            sendMessage(update, msg);
+            sendMessage(update, journey.getLevelTask());
         }
-        // Story mode
-        if (journey.getCurrentLevel().isStory()) {
-            journey.storyModeOn();
-            return;
-        }
-        // Question/Task mode
+    }
+
+    private void processQuestionMode(Update update) {
+        var answer = update.getMessage().getText();
         var success = journey.checkAnswer(answer);
         var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
         if (success) {
@@ -127,6 +125,28 @@ public class JourneyBot extends TelegramLongPollingBot {
             sendMessage(update, msg);
             sendMessage(update, journey.getLevelTask());
         }
+    }
+
+    private void processStoryMode() {
+        journey.storyModeOn();
+    }
+
+    private void processCodeMode(Update update) {
+        var answer = update.getMessage().getText();
+        log.info("Enter code mode");
+        if (journey.secretCodeExists(answer)) {
+            log.info("Secret code exist");
+            journey.moveToLevelBySecretCode(answer);
+            sendMessage(update, "Вжух)! И переносимся на нужный уровень)!");
+            sendMessage(update, journey.getLevelTask());
+            journey.enterCodeModeOff();
+        } else {
+            sendMessage(update, "Нету такого кода) ты хочешь меня надурить)");
+        }
+    }
+
+    private void processNoneMode() {
+        log.info("None mode processing complete");
     }
 
     private void sendMessage(Update update, String msg) {
