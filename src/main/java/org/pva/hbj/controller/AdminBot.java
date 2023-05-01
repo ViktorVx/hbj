@@ -3,6 +3,7 @@ package org.pva.hbj.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pva.hbj.data.Level;
+import org.pva.hbj.data.TaskLevel;
 import org.pva.hbj.provider.ParamsProvider;
 import org.pva.hbj.utils.keyboards.AdminCheckKeyboard;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +38,7 @@ public class AdminBot extends TelegramLongPollingBot {
     }
 
     private void accept() {
-        this.currentCheckLevel.setIsTaskComplete(true);
+        ((TaskLevel)this.currentCheckLevel).setIsTaskComplete(true);
         sendTextMessage("Зачтено!");
     }
 

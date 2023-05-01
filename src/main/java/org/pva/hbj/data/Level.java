@@ -2,11 +2,12 @@ package org.pva.hbj.data;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
 @Data
-@Builder
+@SuperBuilder
 public class Level {
     private String answer;
     private Message message;
@@ -17,10 +18,6 @@ public class Level {
     private List<Message> storyPages;
     @Builder.Default
     private Integer pagePointer = 0;
-    @Builder.Default
-    private Boolean isTask = false;
-    @Builder.Default
-    private Boolean isTaskComplete = false;
 
     public Message getMessage() {
         return isStory ? storyPages.get(pagePointer) : this.message;

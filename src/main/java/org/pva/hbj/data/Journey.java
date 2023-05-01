@@ -95,7 +95,7 @@ public class Journey {
             }
             if (this.currentLevel.isStory()) {
                 this.journeyMode = JourneyMode.STORY;
-            } else if (this.currentLevel.getIsTask()) {
+            } else if (this.currentLevel instanceof TaskLevel) {
                 this.journeyMode = JourneyMode.TASK;
                 adminBot.check(this.currentLevel);
             } else {
@@ -129,9 +129,9 @@ public class Journey {
     }
 
     public boolean checkAnswer(String answer) {
-        if (this.currentLevel.getIsTask()) {
+        if (this.currentLevel instanceof TaskLevel) {
             adminBot.check(this.currentLevel);
-            return this.currentLevel.getIsTaskComplete();
+            return ((TaskLevel)this.currentLevel).getIsTaskComplete();
         } else {
             return this.getCurrentLevel().getAnswer().equalsIgnoreCase(answer);
         }
