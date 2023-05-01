@@ -12,5 +12,5 @@ telegram:
       token: ${ADMIN_BOT_TOKEN}
       chat: ${ADMIN_CHAT}
 save:
-  path: /home/viktorvx/Загрузки/hbj/save/
+  path: ${SAVE_PATH}
   enabled: true
