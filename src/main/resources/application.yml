@@ -5,7 +5,8 @@ telegram:
     hbj:
       name: ${BOT_NAME}
       token: ${BOT_TOKEN}
-      media-path: /home/viktorvx/Загрузки/hbj/
+      media-path: ${MEDIA_PATH}
+      journey-load-file: ${JOURNEY_LOAD_FILE}
     hbj-admin:
       name: ${ADMIN_BOT_NAME}
       token: ${ADMIN_BOT_TOKEN}
