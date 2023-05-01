@@ -5,7 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
-public class Level {
+public abstract class Level {
     private Message message;
     private String secretLevelCode;
     private Level nextLevel;
@@ -14,9 +14,7 @@ public class Level {
         return this.message;
     }
 
-    public JourneyMode getJourneyMode() {
-        return JourneyMode.NONE;
-    }
+    public abstract JourneyMode getJourneyMode();
 
     public Level addNext(Level nextLevel) {
         this.nextLevel = nextLevel;
