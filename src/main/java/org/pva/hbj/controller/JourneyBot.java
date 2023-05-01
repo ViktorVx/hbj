@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pva.hbj.data.Journey;
 import org.pva.hbj.data.Message;
+import org.pva.hbj.data.StoryLevel;
 import org.pva.hbj.provider.ParamsProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -52,7 +53,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         }
         if (journey.isLastStoryPage()) {
             journey.goNextLevel();
-            if (journey.getCurrentLevel().isStory()) {
+            if (journey.getCurrentLevel() instanceof StoryLevel) {
                 sendMessage(update, journey.getLevelStory());
             } else {
                 sendMessage(update, journey.getLevelTask());

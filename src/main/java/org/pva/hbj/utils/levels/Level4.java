@@ -3,11 +3,12 @@ package org.pva.hbj.utils.levels;
 import org.pva.hbj.data.Level;
 import org.pva.hbj.data.MediaType;
 import org.pva.hbj.data.Message;
+import org.pva.hbj.data.QuestionLevel;
 
 public class Level4 {
 
     public static Level generate() {
-        return Level.builder()
+        return QuestionLevel.builder()
                 .message(Message.builder()
                         .mediaType(MediaType.IMAGE)
                         .mediaPath("images/gravity-falls-hd-wallpapers-wallpaper-cave-1-800x800.png")

@@ -2,6 +2,7 @@ package org.pva.hbj.utils.levels;
 
 import org.pva.hbj.data.Level;
 import org.pva.hbj.data.Message;
+import org.pva.hbj.data.StoryLevel;
 import org.pva.hbj.utils.keyboards.StoryKeyboard;
 
 import java.util.List;
@@ -9,8 +10,7 @@ import java.util.List;
 public class Level3 {
 
     public static Level generate() {
-        return Level.builder()
-                .isStory(true)
+        return StoryLevel.builder()
                 .secretLevelCode("l3")
                 .storyPages(
                 List.of(

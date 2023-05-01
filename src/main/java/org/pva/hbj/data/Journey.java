@@ -50,7 +50,7 @@ public class Journey {
             while (level != null) {
                 if (level.getSecretLevelCode() != null && level.getSecretLevelCode().equals(secretCode)) {
                     this.currentLevel = level;
-                    this.journeyMode = this.currentLevel.isStory() ? JourneyMode.STORY : JourneyMode.QUESTION;
+                    this.journeyMode = this.currentLevel instanceof StoryLevel ? JourneyMode.STORY : JourneyMode.QUESTION;
                     return;
                 }
                 level = level.getNextLevel();
@@ -93,7 +93,7 @@ public class Journey {
             if (saveService.saveModeEnabled()) {
                 saveService.save(this.currentLevel.getSecretLevelCode());
             }
-            if (this.currentLevel.isStory()) {
+            if (this.currentLevel instanceof StoryLevel) {
                 this.journeyMode = JourneyMode.STORY;
             } else if (this.currentLevel instanceof TaskLevel) {
                 this.journeyMode = JourneyMode.TASK;
@@ -109,7 +109,7 @@ public class Journey {
     }
 
     public Message getLevelStory() {
-        if (this.currentLevel.isStory()) {
+        if (this.currentLevel instanceof StoryLevel) {
             return this.getCurrentLevel().getMessage();
         } else {
             return new Message("");
@@ -117,14 +117,14 @@ public class Journey {
     }
 
     public void goNextPage() {
-        if (this.currentLevel.isStory()) {
-            this.currentLevel.goNextPage();
+        if (this.currentLevel instanceof StoryLevel) {
+            ((StoryLevel)this.currentLevel).goNextPage();
         }
     }
 
     public boolean isLastStoryPage() {
-        int pointer = this.currentLevel.getPagePointer();
-        int pages = this.currentLevel.getStoryPages().size() - 1;
+        int pointer = ((StoryLevel)this.currentLevel).getPagePointer();
+        int pages = ((StoryLevel)this.currentLevel).getStoryPages().size() - 1;
         return pointer == pages;
     }
 
@@ -133,7 +133,7 @@ public class Journey {
             adminBot.check(this.currentLevel);
             return ((TaskLevel)this.currentLevel).getIsTaskComplete();
         } else {
-            return this.getCurrentLevel().getAnswer().equalsIgnoreCase(answer);
+            return ((QuestionLevel)this.getCurrentLevel()).getAnswer().equalsIgnoreCase(answer);
         }
     }
 
@@ -153,15 +153,15 @@ public class Journey {
     private void resetStories() {
         var level = this.startLevel;
         while (level != null) {
-            if (level.isStory()) {
-                level.setPagePointer(0);
+            if (level instanceof StoryLevel) {
+                ((StoryLevel) level).setPagePointer(0);
             }
             level = level.getNextLevel();
         }
     }
 
     private void updateMode() {
-        if (this.currentLevel.isStory()) {
+        if (this.currentLevel instanceof StoryLevel) {
             this.journeyMode = JourneyMode.STORY;
         } else {
             this.journeyMode = JourneyMode.QUESTION;

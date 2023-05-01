@@ -1,30 +1,21 @@
 package org.pva.hbj.data;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
 
 @Data
 @SuperBuilder
 public class Level {
-    private String answer;
     private Message message;
     private String secretLevelCode;
     private Level nextLevel;
-    private JourneyMode journeyMode;
-    private boolean isStory;
-    private List<Message> storyPages;
-    @Builder.Default
-    private Integer pagePointer = 0;
 
     public Message getMessage() {
-        return isStory ? storyPages.get(pagePointer) : this.message;
+        return this.message;
     }
 
-    public void goNextPage() {
-        pagePointer ++;
+    public JourneyMode getJourneyMode() {
+        return JourneyMode.NONE;
     }
 
     public Level addNext(Level nextLevel) {
