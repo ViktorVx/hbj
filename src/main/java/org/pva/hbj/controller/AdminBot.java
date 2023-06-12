@@ -19,6 +19,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class AdminBot extends TelegramLongPollingBot {
 
     private final ParamsProvider paramsProvider;
+    private final AdminCheckKeyboard adminCheckKeyboard;
     @Value("${telegram.bot.hbj-admin.chat}")
     private String adminChatId;
     private Level currentCheckLevel;
@@ -60,7 +61,7 @@ public class AdminBot extends TelegramLongPollingBot {
             var message = new SendMessage();
             message.setChatId(adminChatId);
             message.setText(level.getMessage().getText());
-            message.setReplyMarkup(AdminCheckKeyboard.create());
+            message.setReplyMarkup(adminCheckKeyboard.create());
             message.enableHtml(true);
             execute(message);
         } catch (TelegramApiException e) {

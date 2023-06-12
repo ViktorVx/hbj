@@ -1,14 +1,20 @@
 package org.pva.hbj.utils.keyboards;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GamerCompleteKeyboard {
+@Component
+public class GamerCompleteKeyboard implements KeyboardCreatable {
 
-    public static InlineKeyboardMarkup create() {
+    public GamerCompleteKeyboard() {
+    }
+
+    @Override
+    public InlineKeyboardMarkup create() {
         var inlineKeyboardMarkup =new InlineKeyboardMarkup();
         InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText("Выполнено");
