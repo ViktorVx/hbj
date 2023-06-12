@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 public class JourneyConfiguration {
 
     @Bean
-    public Level startLevel() {
-        return StoryProvider.makeStoryLine();
+    public Level startLevel(StoryProvider storyProvider) {
+        return storyProvider.makeStoryLine();
     }
 
     @Bean
