@@ -52,6 +52,11 @@ public class JourneyBot extends TelegramLongPollingBot {
             return;
         }
         if (journey.isLastStoryPage()) {
+            if (journey.doWin()) {
+                sendMessage(update, "Ура! Ты победил!");
+                journey.noneModeOn();
+                return;
+            }
             journey.goNextLevel();
             if (journey.getCurrentLevel() instanceof StoryLevel) {
                 sendMessage(update, journey.getLevelStory());
@@ -86,7 +91,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         switch (journey.getJourneyMode()) {
             case NONE -> processNoneMode();
             case CODE -> processCodeMode(update);
-            case STORY -> processStoryMode();
+            case STORY -> processStoryMode(update);
             case QUESTION -> processQuestionMode(update);
             case TASK -> processTaskMode(update);
         }
@@ -128,8 +133,12 @@ public class JourneyBot extends TelegramLongPollingBot {
         }
     }
 
-    private void processStoryMode() {
+    private void processStoryMode(Update update) {
         journey.storyModeOn();
+        if (journey.doWin()) {
+            journey.noneModeOn();
+            sendMessage(update, "Ура! Ты победил!");
+        }
     }
 
     private void processCodeMode(Update update) {

@@ -78,6 +78,10 @@ public class Journey {
         this.journeyMode = JourneyMode.STORY;
     }
 
+    public void noneModeOn() {
+        this.journeyMode = JourneyMode.NONE;
+    }
+
     public void enterCodeModeOff() {
         updateMode();
         resetStories();
