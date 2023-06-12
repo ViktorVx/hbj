@@ -85,6 +85,7 @@ public class Journey {
     public void enterCodeModeOff() {
         updateMode();
         resetStories();
+        resetTasks();
     }
 
     public boolean hasNextLevel() {
@@ -149,8 +150,19 @@ public class Journey {
         this.currentLevel = this.startLevel;
         updateMode();
         resetStories();
+        resetTasks();
         if (saveService.saveModeEnabled()) {
             saveService.clearProgress();
+        }
+    }
+
+    private void resetTasks() {
+        var level = this.startLevel;
+        while (level != null) {
+            if (level instanceof TaskLevel) {
+                ((TaskLevel) level).setIsTaskComplete(false);
+            }
+            level = level.getNextLevel();
         }
     }
 
