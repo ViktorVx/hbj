@@ -83,11 +83,11 @@ public class StoryProvider {
         };
     }
 
-    private List<Message> dtoToMesageList(List<StoryPageLoadDTO> loadPages) {
+    private List<Message> dtoToMesageList(List<MessageDTO> loadPages) {
         return loadPages.stream().map(this::dtoToMessage).collect(Collectors.toList());
     }
 
-    private Message dtoToMessage(StoryPageLoadDTO pageLoadDTO) {
+    private Message dtoToMessage(MessageDTO pageLoadDTO) {
         InlineKeyboardMarkup keyboard;
         if (pageLoadDTO.getKeyboard() == null) {
             keyboard = null;
@@ -101,6 +101,8 @@ public class StoryProvider {
         return Message.builder()
                 .keyboard(keyboard)
                 .text(pageLoadDTO.getText())
+                .mediaType(pageLoadDTO.getMediaType())
+                .mediaPath(pageLoadDTO.getMediaPath())
                 .build();
     }
 }

@@ -151,15 +151,18 @@ public class JourneyBot extends TelegramLongPollingBot {
     }
 
     private void sendMessage(Update update, String msg) {
-        sendMessage(update, Message.builder().text(msg).build());
+        sendMessage(update, Message.builder().text(msg).mediaType(null).build());
     }
 
     private void sendMessage(Update update, Message msg) {
-        switch (msg.getMediaType()) {
-            case IMAGE -> sendImageMessage(update, msg);
-            case VIDEO -> sendVideoMessage(update, msg);
-            case AUDIO -> sendAudioMessage(update, msg);
-            default -> sendTextMessage(update, msg);
+        if (msg.getMediaType() == null) {
+            sendTextMessage(update, msg);
+        } else {
+            switch (msg.getMediaType()) {
+                case IMAGE -> sendImageMessage(update, msg);
+                case VIDEO -> sendVideoMessage(update, msg);
+                case AUDIO -> sendAudioMessage(update, msg);
+            }
         }
     }
 
