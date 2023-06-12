@@ -1,5 +1,5 @@
 HELP.md
-story.yaml
+src/main/java/org/pva/hbj/utils/story*
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
