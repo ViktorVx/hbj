@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.pva.hbj.data.Level;
-import org.pva.hbj.data.Message;
-import org.pva.hbj.data.QuestionLevel;
-import org.pva.hbj.data.StoryLevel;
+import org.pva.hbj.data.*;
 import org.pva.hbj.utils.keyboards.AdminCheckKeyboard;
 import org.pva.hbj.utils.keyboards.GamerCompleteKeyboard;
 import org.pva.hbj.utils.keyboards.StoryKeyboard;
@@ -77,6 +74,10 @@ public class StoryProvider {
             case QUESTION -> QuestionLevel.builder()
                     .message(dtoToMessage(loadDTO.getMessage()))
                     .answer(loadDTO.getAnswer())
+                    .secretLevelCode(loadDTO.getSecretLevelCode())
+                    .build();
+            case TASK -> TaskLevel.builder()
+                    .message(dtoToMessage(loadDTO.getMessage()))
                     .secretLevelCode(loadDTO.getSecretLevelCode())
                     .build();
             default -> null;
