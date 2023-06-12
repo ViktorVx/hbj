@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 public abstract class Level {
+    private String id;
     private Message message;
     private String secretLevelCode;
     private Level nextLevel;
