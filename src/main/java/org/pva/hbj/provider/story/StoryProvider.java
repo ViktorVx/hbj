@@ -6,12 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.pva.hbj.data.Level;
 import org.pva.hbj.data.Message;
+import org.pva.hbj.data.QuestionLevel;
 import org.pva.hbj.data.StoryLevel;
 import org.pva.hbj.utils.keyboards.AdminCheckKeyboard;
 import org.pva.hbj.utils.keyboards.GamerCompleteKeyboard;
 import org.pva.hbj.utils.keyboards.StoryKeyboard;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -57,6 +59,12 @@ public class StoryProvider {
         log.info("======");
         log.info(loadDTOList.toString());
         var levelList = loadDTOList.stream().map(this::dtoToLevel).toList();
+        //===
+        for (int i = 0; i < levelList.size(); i++) {
+            if (i != levelList.size() - 1)
+                levelList.get(i).setNextLevel(levelList.get(i + 1));
+        }
+        //===
         return levelList.get(0);
     }
 
@@ -65,6 +73,11 @@ public class StoryProvider {
             case STORY -> StoryLevel.builder()
                     .secretLevelCode(loadDTO.getSecretLevelCode())
                     .storyPages(dtoToMesageList(loadDTO.getStoryPages()))
+                    .build();
+            case QUESTION -> QuestionLevel.builder()
+                    .message(dtoToMessage(loadDTO.getMessage()))
+                    .answer(loadDTO.getAnswer())
+                    .secretLevelCode(loadDTO.getSecretLevelCode())
                     .build();
             default -> null;
         };
@@ -75,11 +88,16 @@ public class StoryProvider {
     }
 
     private Message dtoToMessage(StoryPageLoadDTO pageLoadDTO) {
-        var keyboard = switch (pageLoadDTO.getKeyboard()) {
-            case STORY_KEYBOARD -> storyKeyboard.create();
-            case ADMIN_KEYBOARD -> adminCheckKeyboard.create();
-            case GAMER_COMPLETE_KEYBOARD -> gamerCompleteKeyboard.create();
-        };
+        InlineKeyboardMarkup keyboard;
+        if (pageLoadDTO.getKeyboard() == null) {
+            keyboard = null;
+        } else {
+            keyboard = switch (pageLoadDTO.getKeyboard()) {
+                case STORY_KEYBOARD -> storyKeyboard.create();
+                case ADMIN_KEYBOARD -> adminCheckKeyboard.create();
+                case GAMER_COMPLETE_KEYBOARD -> gamerCompleteKeyboard.create();
+            };
+        }
         return Message.builder()
                 .keyboard(keyboard)
                 .text(pageLoadDTO.getText())

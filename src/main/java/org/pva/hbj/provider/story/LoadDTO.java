@@ -10,4 +10,6 @@ public class LoadDTO {
     private JourneyMode type;
     private String secretLevelCode;
     private List<StoryPageLoadDTO> storyPages;
+    private StoryPageLoadDTO message;
+    private String answer;
 }
