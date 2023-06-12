@@ -51,10 +51,7 @@ public class StoryProvider {
 
     private Level makeStoryFromJson() throws IOException {
         String content = Files.readString(Path.of(journeyLoadFile), StandardCharsets.UTF_8);
-        log.debug(content);
         var loadDTOList = new ObjectMapper().readValue(content, new TypeReference<List<LoadDTO>>() {});
-        log.info("======");
-        log.info(loadDTOList.toString());
         var levelList = loadDTOList.stream().map(this::dtoToLevel).toList();
         //===
         for (int i = 0; i < levelList.size(); i++) {
