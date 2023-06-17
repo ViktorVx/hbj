@@ -1,6 +1,7 @@
 package org.pva.hbj.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.pva.hbj.data.Journey;
 import org.pva.hbj.data.Message;
@@ -18,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -28,7 +30,10 @@ public class JourneyBot extends TelegramLongPollingBot {
     private final Journey journey;
     @Value("${telegram.bot.hbj.media-path}")
     private String mediaPath;
+    @Value("${settings.message-new-level-delay}")
+    private Integer newLevelDelay;
 
+    @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
         var word = "";
@@ -87,7 +92,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         sendMessage(update, journey.getLevelTask());
     }
 
-    private void process(Update update) {
+    private void process(Update update) throws InterruptedException {
         switch (journey.getJourneyMode()) {
             case NONE -> processNoneMode();
             case CODE -> processCodeMode(update);
@@ -115,7 +120,7 @@ public class JourneyBot extends TelegramLongPollingBot {
         }
     }
 
-    private void processQuestionMode(Update update) {
+    private void processQuestionMode(Update update) throws InterruptedException {
         var answer = update.getMessage().getText();
         var success = journey.checkAnswer(answer);
         var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
@@ -125,6 +130,7 @@ public class JourneyBot extends TelegramLongPollingBot {
             } else {
                 sendMessage(update, msg);
                 journey.goNextLevel();
+                TimeUnit.SECONDS.sleep(newLevelDelay);
                 sendMessage(update, journey.getLevelTask());
             }
         } else {

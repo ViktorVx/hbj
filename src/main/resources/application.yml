@@ -14,3 +14,5 @@ telegram:
 save:
   path: ${SAVE_PATH}
   enabled: true
+settings:
+  message-new-level-delay: 5
