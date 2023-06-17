@@ -1,6 +1,7 @@
 package org.pva.hbj.utils.send;
 
 import lombok.extern.slf4j.Slf4j;
+import org.pva.hbj.data.MediaType;
 import org.pva.hbj.data.Message;
 import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -25,7 +26,7 @@ public class SendMessagesUtil {
     }
 
     public static void sendMessage(TelegramLongPollingBot bot, Update update, String msg) {
-        sendMessage(bot, update, Message.builder().text(msg).mediaType(null).build());
+        sendMessage(bot, update, Message.builder().text(msg).mediaType(MediaType.TEXT).build());
     }
 
     public static void sendMessage(TelegramLongPollingBot bot, Update update, Message msg) {
@@ -33,6 +34,7 @@ public class SendMessagesUtil {
             sendTextMessage(bot, update, msg);
         } else {
             switch (msg.getMediaType()) {
+                case TEXT  -> sendTextMessage(bot, update, msg);
                 case IMAGE -> sendImageMessage(bot, update, msg);
                 case VIDEO -> sendVideoMessage(bot, update, msg);
                 case AUDIO -> sendAudioMessage(bot, update, msg);
