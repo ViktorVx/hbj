@@ -15,4 +15,4 @@ save:
   path: ${SAVE_PATH}
   enabled: true
 settings:
-  message-new-level-delay: 2
+  message-new-level-delay: ${MESSAGE_DELAY}
