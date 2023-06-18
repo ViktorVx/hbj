@@ -1,10 +1,9 @@
 package org.pva.hbj.utils.send;
 
 import lombok.extern.slf4j.Slf4j;
+import org.pva.hbj.controller.Bot;
 import org.pva.hbj.data.MediaType;
 import org.pva.hbj.data.Message;
-import org.springframework.beans.factory.annotation.Value;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendAudio;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -18,18 +17,13 @@ import java.io.File;
 @Slf4j
 public class SendMessagesUtil {
 
-    @Value("${telegram.bot.hbj.media-path}")
-    private static String mediaPath;
+    private SendMessagesUtil() {}
 
-    private SendMessagesUtil() {
-
-    }
-
-    public static void sendMessage(TelegramLongPollingBot bot, Update update, String msg) {
+    public static void sendMessage(Bot bot, Update update, String msg) {
         sendMessage(bot, update, Message.builder().text(msg).mediaType(MediaType.TEXT).build());
     }
 
-    public static void sendMessage(TelegramLongPollingBot bot, Update update, Message msg) {
+    public static void sendMessage(Bot bot, Update update, Message msg) {
         if (msg.getMediaType() == null) {
             sendTextMessage(bot, update, msg);
         } else {
@@ -42,7 +36,7 @@ public class SendMessagesUtil {
         }
     }
 
-    private static void sendTextMessage(TelegramLongPollingBot bot, Update update, Message msg) {
+    private static void sendTextMessage(Bot bot, Update update, Message msg) {
         try {
             var message = new SendMessage();
             message.setChatId(extractChatId(update));
@@ -57,9 +51,9 @@ public class SendMessagesUtil {
         }
     }
 
-    private static void sendImageMessage(TelegramLongPollingBot bot, Update update, Message msg) {
+    private static void sendImageMessage(Bot bot, Update update, Message msg) {
         try {
-            var photo = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
+            var photo = new InputFile(new File(bot.getMediaPath() + msg.getMediaPath()), "filename");
             var message = new SendPhoto();
             message.setChatId(extractChatId(update));
             message.setCaption(msg.getText());
@@ -73,9 +67,9 @@ public class SendMessagesUtil {
         }
     }
 
-    private static void sendAudioMessage(TelegramLongPollingBot bot, Update update, Message msg) {
+    private static void sendAudioMessage(Bot bot, Update update, Message msg) {
         try {
-            var audio = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
+            var audio = new InputFile(new File(bot.getMediaPath() + msg.getMediaPath()), "filename");
             var message = new SendAudio();
             message.setChatId(extractChatId(update));
             message.setCaption(msg.getText());
@@ -89,9 +83,9 @@ public class SendMessagesUtil {
         }
     }
 
-    private static void sendVideoMessage(TelegramLongPollingBot bot, Update update, Message msg) {
+    private static void sendVideoMessage(Bot bot, Update update, Message msg) {
         try {
-            var video = new InputFile(new File(mediaPath + msg.getMediaPath()), "filename");
+            var video = new InputFile(new File(bot.getMediaPath() + msg.getMediaPath()), "filename");
             var message = new SendVideo();
             message.setChatId(extractChatId(update));
             message.setCaption(msg.getText());

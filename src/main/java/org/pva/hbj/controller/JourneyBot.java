@@ -8,7 +8,6 @@ import org.pva.hbj.data.StoryLevel;
 import org.pva.hbj.provider.ParamsProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.concurrent.TimeUnit;
@@ -18,12 +17,14 @@ import static org.pva.hbj.utils.send.SendMessagesUtil.sendMessage;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JourneyBot extends TelegramLongPollingBot {
+public class JourneyBot extends Bot {
 
     private final ParamsProvider paramsProvider;
     private final Journey journey;
     @Value("${settings.message-new-level-delay}")
     private Integer newLevelDelay;
+    @Value("${telegram.bot.hbj.media-path}")
+    private String mediaPath;
 
     @SneakyThrows
     @Override
@@ -165,5 +166,10 @@ public class JourneyBot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return paramsProvider.getBotToken();
+    }
+
+    @Override
+    public String getMediaPath() {
+        return this.mediaPath;
     }
 }
