@@ -11,5 +11,6 @@ public class LoadDTO {
     private String secretLevelCode;
     private List<MessageDTO> storyPages;
     private MessageDTO message;
+    private MessageDTO winMessage;
     private String answer;
 }

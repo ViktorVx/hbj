@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.pva.hbj.data.Journey;
+import org.pva.hbj.data.MediaType;
+import org.pva.hbj.data.Message;
 import org.pva.hbj.data.StoryLevel;
 import org.pva.hbj.provider.ParamsProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,17 +86,25 @@ public class JourneyBot extends Bot {
     private void processTaskMode(Update update) {
         var answer = update.getCallbackQuery().getMessage().getText();
         var success = journey.checkAnswer(answer);
-        var msg = success ? "Отлично)! Поехали дальше)!" : "Не, не, не)) ты хочешь меня надурить)!";
+        Message msg;
+        if (success) {
+            if (journey.getCurrentLevel().getWinMessage() == null) {
+                msg = Message.builder().mediaType(MediaType.TEXT).text("Ура! Получилось)!").build();
+            } else {
+                msg = journey.getCurrentLevel().getWinMessage();
+            }
+        } else {
+            msg = Message.builder().mediaType(MediaType.TEXT).text("Не, не, не)) ты хочешь меня надурить)!").build();
+        }
+        sendMessage(this, adminBot, update, msg);
         if (success) {
             if (journey.doWin()) {
-                sendMessage(this, adminBot, update, "Ура! Ты победил!");
+                journey.noneModeOn();
             } else {
-                sendMessage(this, adminBot, update, msg);
                 journey.goNextLevel();
                 sendMessage(this, adminBot, update, journey.getLevelTask());
             }
         } else {
-            sendMessage(this, adminBot, update, msg);
             sendMessage(this, adminBot, update, journey.getLevelTask());
         }
     }
@@ -102,18 +112,27 @@ public class JourneyBot extends Bot {
     private void processQuestionMode(Update update) throws InterruptedException {
         var answer = update.getMessage().getText();
         var success = journey.checkAnswer(answer);
-        var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
+        Message msg;
+        if (success) {
+            if (journey.getCurrentLevel().getWinMessage() == null) {
+                msg = Message.builder().mediaType(MediaType.TEXT).text("Правильно)! Поехали дальше)!").build();
+            } else {
+                msg = journey.getCurrentLevel().getWinMessage();
+            }
+        } else {
+            msg = Message.builder().mediaType(MediaType.TEXT).text("Не верно( Подумай еще!").build();
+        }
+
+        sendMessage(this, adminBot, update, msg);
         if (success) {
             if (journey.doWin()) {
-                sendMessage(this, adminBot, update, "Ура! Ты победил!");
+                journey.noneModeOn();
             } else {
-                sendMessage(this, adminBot, update, msg);
                 journey.goNextLevel();
                 TimeUnit.SECONDS.sleep(newLevelDelay);
                 sendMessage(this, adminBot, update, journey.getLevelTask());
             }
         } else {
-            sendMessage(this, adminBot, update, msg);
             sendMessage(this, adminBot, update, journey.getLevelTask());
         }
     }
@@ -123,20 +142,6 @@ public class JourneyBot extends Bot {
         if (journey.doWin()) {
             journey.noneModeOn();
             sendMessage(this, adminBot, update, "Ура! Ты победил!");
-        }
-    }
-
-    private void processCodeMode(Update update) {
-        var answer = update.getMessage().getText();
-        log.info("Enter code mode");
-        if (journey.secretCodeExists(answer)) {
-            log.info("Secret code exist");
-            journey.moveToLevelBySecretCode(answer);
-            sendMessage(this, adminBot, update, "Вжух)! И переносимся на нужный уровень)!");
-            sendMessage(this, adminBot, update, journey.getLevelTask());
-            journey.enterCodeModeOff();
-        } else {
-            sendMessage(this, adminBot, update, "Нету такого кода) ты хочешь меня надурить)");
         }
     }
 

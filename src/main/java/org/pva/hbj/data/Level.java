@@ -8,11 +8,16 @@ import lombok.experimental.SuperBuilder;
 public abstract class Level {
     private String id;
     private Message message;
+    private Message winMessage;
     private String secretLevelCode;
     private Level nextLevel;
 
     public Message getMessage() {
         return this.message;
+    }
+
+    public Message getWinMessage() {
+        return this.winMessage;
     }
 
     public abstract JourneyMode getJourneyMode();

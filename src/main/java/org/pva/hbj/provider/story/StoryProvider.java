@@ -37,16 +37,6 @@ public class StoryProvider {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        var startLevel = Level0.generate();
-//        startLevel
-//                .addNext(Level1.generate())
-//                .addNext(Level11.generate())
-//                .addNext(Level2.generate())
-//                .addNext(Level3.generate())
-//                .addNext(Level4.generate())
-//                .addNext(Level5.generate())
-//                .addNext(Level6.generate());
-//        return startLevel;
     }
 
     private Level makeStoryFromJson() throws IOException {
@@ -72,10 +62,12 @@ public class StoryProvider {
                     .message(dtoToMessage(loadDTO.getMessage()))
                     .answer(loadDTO.getAnswer())
                     .secretLevelCode(loadDTO.getSecretLevelCode())
+                    .winMessage(dtoToMessage(loadDTO.getWinMessage()))
                     .build();
             case TASK -> TaskLevel.builder()
                     .message(dtoToMessage(loadDTO.getMessage()))
                     .secretLevelCode(loadDTO.getSecretLevelCode())
+                    .winMessage(dtoToMessage(loadDTO.getWinMessage()))
                     .build();
             default -> null;
         };
@@ -87,6 +79,9 @@ public class StoryProvider {
 
     private Message dtoToMessage(MessageDTO pageLoadDTO) {
         InlineKeyboardMarkup keyboard;
+        if (pageLoadDTO == null) {
+            return null;
+        }
         if (pageLoadDTO.getKeyboard() == null) {
             keyboard = null;
         } else {
