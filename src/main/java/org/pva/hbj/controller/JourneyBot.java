@@ -21,6 +21,7 @@ public class JourneyBot extends Bot {
 
     private final ParamsProvider paramsProvider;
     private final Journey journey;
+    private final AdminBot adminBot;
     @Value("${settings.message-new-level-delay}")
     private Integer newLevelDelay;
     @Value("${telegram.bot.hbj.media-path}")
@@ -36,6 +37,7 @@ public class JourneyBot extends Bot {
             word = update.getMessage().getText();
         }
         log.info(word);
+        adminBot.sendTextMessage(word);
         switch (word) {
             case "/start" -> start(update);
             case "/code" -> applyCode(update);
@@ -51,19 +53,19 @@ public class JourneyBot extends Bot {
         }
         if (journey.isLastStoryPage()) {
             if (journey.doWin()) {
-                sendMessage(this, update, "Ура! Ты победил!");
+                sendMessage(this, adminBot, update, "Ура! Ты победил!");
                 journey.noneModeOn();
                 return;
             }
             journey.goNextLevel();
             if (journey.getCurrentLevel() instanceof StoryLevel) {
-                sendMessage(this, update, journey.getLevelStory());
+                sendMessage(this, adminBot, update, journey.getLevelStory());
             } else {
-                sendMessage(this, update, journey.getLevelTask());
+                sendMessage(this, adminBot, update, journey.getLevelTask());
             }
         } else {
             journey.goNextPage();
-            sendMessage(this, update, journey.getLevelStory());
+            sendMessage(this, adminBot, update, journey.getLevelStory());
         }
     }
 
@@ -72,17 +74,17 @@ public class JourneyBot extends Bot {
             return;
         }
         journey.enterCodeModeOff();
-        sendMessage(this, update, journey.getLevelTask());
+        sendMessage(this, adminBot, update, journey.getLevelTask());
     }
 
     private void applyCode(Update update) {
         journey.enterCodeModeOn();
-        sendMessage(this, update, "Введи секретный код: ");
+        sendMessage(this, adminBot, update, "Введи секретный код: ");
     }
 
     private void start(Update update) {
         journey.reset();
-        sendMessage(this, update, journey.getLevelTask());
+        sendMessage(this, adminBot, update, journey.getLevelTask());
     }
 
     private void process(Update update) throws InterruptedException {
@@ -101,15 +103,15 @@ public class JourneyBot extends Bot {
         var msg = success ? "Отлично)! Поехали дальше)!" : "Не, не, не)) ты хочешь меня надурить)!";
         if (success) {
             if (journey.doWin()) {
-                sendMessage(this, update, "Ура! Ты победил!");
+                sendMessage(this, adminBot, update, "Ура! Ты победил!");
             } else {
-                sendMessage(this, update, msg);
+                sendMessage(this, adminBot, update, msg);
                 journey.goNextLevel();
-                sendMessage(this, update, journey.getLevelTask());
+                sendMessage(this, adminBot, update, journey.getLevelTask());
             }
         } else {
-            sendMessage(this, update, msg);
-            sendMessage(this, update, journey.getLevelTask());
+            sendMessage(this, adminBot, update, msg);
+            sendMessage(this, adminBot, update, journey.getLevelTask());
         }
     }
 
@@ -119,16 +121,16 @@ public class JourneyBot extends Bot {
         var msg = success ? "Правильно)! Поехали дальше)!" : "Не верно( Подумай еще!";
         if (success) {
             if (journey.doWin()) {
-                sendMessage(this, update, "Ура! Ты победил!");
+                sendMessage(this, adminBot, update, "Ура! Ты победил!");
             } else {
-                sendMessage(this, update, msg);
+                sendMessage(this, adminBot, update, msg);
                 journey.goNextLevel();
                 TimeUnit.SECONDS.sleep(newLevelDelay);
-                sendMessage(this, update, journey.getLevelTask());
+                sendMessage(this, adminBot, update, journey.getLevelTask());
             }
         } else {
-            sendMessage(this, update, msg);
-            sendMessage(this, update, journey.getLevelTask());
+            sendMessage(this, adminBot, update, msg);
+            sendMessage(this, adminBot, update, journey.getLevelTask());
         }
     }
 
@@ -136,7 +138,7 @@ public class JourneyBot extends Bot {
         journey.storyModeOn();
         if (journey.doWin()) {
             journey.noneModeOn();
-            sendMessage(this, update, "Ура! Ты победил!");
+            sendMessage(this, adminBot, update, "Ура! Ты победил!");
         }
     }
 
@@ -146,11 +148,11 @@ public class JourneyBot extends Bot {
         if (journey.secretCodeExists(answer)) {
             log.info("Secret code exist");
             journey.moveToLevelBySecretCode(answer);
-            sendMessage(this, update, "Вжух)! И переносимся на нужный уровень)!");
-            sendMessage(this, update, journey.getLevelTask());
+            sendMessage(this, adminBot, update, "Вжух)! И переносимся на нужный уровень)!");
+            sendMessage(this, adminBot, update, journey.getLevelTask());
             journey.enterCodeModeOff();
         } else {
-            sendMessage(this, update, "Нету такого кода) ты хочешь меня надурить)");
+            sendMessage(this, adminBot, update, "Нету такого кода) ты хочешь меня надурить)");
         }
     }
 

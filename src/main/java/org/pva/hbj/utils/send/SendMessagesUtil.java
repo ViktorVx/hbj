@@ -1,6 +1,7 @@
 package org.pva.hbj.utils.send;
 
 import lombok.extern.slf4j.Slf4j;
+import org.pva.hbj.controller.AdminBot;
 import org.pva.hbj.controller.Bot;
 import org.pva.hbj.data.MediaType;
 import org.pva.hbj.data.Message;
@@ -19,24 +20,24 @@ public class SendMessagesUtil {
 
     private SendMessagesUtil() {}
 
-    public static void sendMessage(Bot bot, Update update, String msg) {
-        sendMessage(bot, update, Message.builder().text(msg).mediaType(MediaType.TEXT).build());
+    public static void sendMessage(Bot bot, AdminBot adminBot, Update update, String msg) {
+        sendMessage(bot, adminBot, update, Message.builder().text(msg).mediaType(MediaType.TEXT).build());
     }
 
-    public static void sendMessage(Bot bot, Update update, Message msg) {
+    public static void sendMessage(Bot bot, AdminBot adminBot, Update update, Message msg) {
         if (msg.getMediaType() == null) {
-            sendTextMessage(bot, update, msg);
+            sendTextMessage(bot, adminBot, update, msg);
         } else {
             switch (msg.getMediaType()) {
-                case TEXT  -> sendTextMessage(bot, update, msg);
-                case IMAGE -> sendImageMessage(bot, update, msg);
-                case VIDEO -> sendVideoMessage(bot, update, msg);
-                case AUDIO -> sendAudioMessage(bot, update, msg);
+                case TEXT  -> sendTextMessage(bot, adminBot, update, msg);
+                case IMAGE -> sendImageMessage(bot, adminBot, update, msg);
+                case VIDEO -> sendVideoMessage(bot, adminBot, update, msg);
+                case AUDIO -> sendAudioMessage(bot, adminBot, update, msg);
             }
         }
     }
 
-    private static void sendTextMessage(Bot bot, Update update, Message msg) {
+    private static void sendTextMessage(Bot bot, AdminBot adminBot, Update update, Message msg) {
         try {
             var message = new SendMessage();
             message.setChatId(extractChatId(update));
@@ -46,12 +47,15 @@ public class SendMessagesUtil {
                 message.setReplyMarkup(msg.getKeyboard());
             }
             bot.execute(message);
+            //***
+            adminBot.sendTextMessage(message.getText());
+            //***
         } catch (TelegramApiException e) {
             log.error(e.toString());
         }
     }
 
-    private static void sendImageMessage(Bot bot, Update update, Message msg) {
+    private static void sendImageMessage(Bot bot, AdminBot adminBot, Update update, Message msg) {
         try {
             var photo = new InputFile(new File(bot.getMediaPath() + msg.getMediaPath()), "filename");
             var message = new SendPhoto();
@@ -62,12 +66,15 @@ public class SendMessagesUtil {
                 message.setReplyMarkup(msg.getKeyboard());
             }
             bot.execute(message);
+            //***
+            adminBot.sendTextMessage(msg.getText());
+            //***
         } catch (TelegramApiException e) {
             log.error(e.toString());
         }
     }
 
-    private static void sendAudioMessage(Bot bot, Update update, Message msg) {
+    private static void sendAudioMessage(Bot bot, AdminBot adminBot, Update update, Message msg) {
         try {
             var audio = new InputFile(new File(bot.getMediaPath() + msg.getMediaPath()), "filename");
             var message = new SendAudio();
@@ -78,12 +85,15 @@ public class SendMessagesUtil {
                 message.setReplyMarkup(msg.getKeyboard());
             }
             bot.execute(message);
+            //***
+            adminBot.sendTextMessage(msg.getText());
+            //***
         } catch (TelegramApiException e) {
             log.error(e.toString());
         }
     }
 
-    private static void sendVideoMessage(Bot bot, Update update, Message msg) {
+    private static void sendVideoMessage(Bot bot, AdminBot adminBot, Update update, Message msg) {
         try {
             var video = new InputFile(new File(bot.getMediaPath() + msg.getMediaPath()), "filename");
             var message = new SendVideo();
@@ -94,6 +104,9 @@ public class SendMessagesUtil {
                 message.setReplyMarkup(msg.getKeyboard());
             }
             bot.execute(message);
+            //***
+            adminBot.sendTextMessage(msg.getText());
+            //***
         } catch (TelegramApiException e) {
             log.error(e.toString());
         }

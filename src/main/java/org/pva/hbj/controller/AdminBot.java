@@ -44,7 +44,7 @@ public class AdminBot extends Bot {
         sendTextMessage("Зачтено!");
     }
 
-    private void sendTextMessage(String msg) {
+    public void sendTextMessage(String msg) {
         try {
             var message = new SendMessage();
             message.setChatId(adminChatId);
