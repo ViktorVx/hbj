@@ -58,20 +58,12 @@ public class Journey {
         }
     }
 
-    public boolean isCodeEnterMode() {
-        return this.journeyMode == JourneyMode.CODE;
-    }
-
     public boolean isStoreMode() {
         return this.journeyMode == JourneyMode.STORY;
     }
 
     public boolean isNoneMode() {
         return this.journeyMode == JourneyMode.NONE;
-    }
-
-    public void enterCodeModeOn() {
-        this.journeyMode = JourneyMode.CODE;
     }
 
     public void storyModeOn() {

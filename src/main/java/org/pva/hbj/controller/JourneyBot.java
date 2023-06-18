@@ -40,8 +40,6 @@ public class JourneyBot extends Bot {
         adminBot.sendTextMessage(word);
         switch (word) {
             case "/start" -> start(update);
-            case "/code" -> applyCode(update);
-            case "/cancel" -> cancel(update);
             case "/next" -> next(update);
             default -> process(update);
         }
@@ -69,19 +67,6 @@ public class JourneyBot extends Bot {
         }
     }
 
-    private void cancel(Update update) {
-        if (!journey.isCodeEnterMode()) {
-            return;
-        }
-        journey.enterCodeModeOff();
-        sendMessage(this, adminBot, update, journey.getLevelTask());
-    }
-
-    private void applyCode(Update update) {
-        journey.enterCodeModeOn();
-        sendMessage(this, adminBot, update, "Введи секретный код: ");
-    }
-
     private void start(Update update) {
         journey.reset();
         sendMessage(this, adminBot, update, journey.getLevelTask());
@@ -90,7 +75,6 @@ public class JourneyBot extends Bot {
     private void process(Update update) throws InterruptedException {
         switch (journey.getJourneyMode()) {
             case NONE -> processNoneMode();
-            case CODE -> processCodeMode(update);
             case STORY -> processStoryMode(update);
             case QUESTION -> processQuestionMode(update);
             case TASK -> processTaskMode(update);
